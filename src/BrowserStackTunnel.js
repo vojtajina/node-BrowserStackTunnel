@@ -12,7 +12,7 @@ function BrowserStackTunnel(options) {
 
   this.stdoutData = '';
   this.tunnel = null;
-    
+
   options.jarFile = options.jarFile || defaultJarPath;
   options.hosts.forEach(function (host) {
     if (params.length > 0) {
@@ -38,7 +38,7 @@ function BrowserStackTunnel(options) {
 
     http.get('http://www.browserstack.com/BrowserStackTunnel.jar', function (response) {
       console.log('Downloading newer version...');
-      
+
       new_browserstack_lib.on('finish', function () {
         console.log('Downloading... Done');
         new_browserstack_lib.close();
@@ -62,6 +62,8 @@ function BrowserStackTunnel(options) {
   });
 
   this.updateState = function (data) {
+    console.log('**DATA', data.toString());
+
     var state;
     this.stdoutData += data.toString();
 
@@ -100,11 +102,14 @@ function BrowserStackTunnel(options) {
 
   this.startTunnel = function () {
     if (!fs.existsSync(options.jarFile)) {
+      console.log('** does not exist', options.jarFile)
       this.exit();
       return;
     }
 
     this.cleanUp();
+    console.log('** SPAWN', options.jarFile, options.key, params);
+
     this.tunnel = spawn('java', ['-jar', options.jarFile, options.key, params]);
     this.tunnel.stdout.on('data', this.updateState.bind(this));
     this.tunnel.stderr.on('data', this.updateState.bind(this));
