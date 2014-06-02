@@ -137,8 +137,10 @@ function BrowserStackTunnel(options) {
   };
 
   this._startTunnel = function () {
+    var relativeCommand = binary.command.replace(process.cwd() + '/', '');
+
     this.cleanUp();
-    this.tunnel = spawn(binary.command, binary.args.concat([options.key]).concat(params));
+    this.tunnel = spawn(relativeCommand, binary.args.concat([options.key]).concat(params));
     this.tunnel.stdout.on('data', this.updateState.bind(this));
     this.tunnel.stderr.on('data', this.updateState.bind(this));
     this.tunnel.on('error', this.killTunnel.bind(this));
